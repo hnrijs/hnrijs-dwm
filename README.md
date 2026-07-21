@@ -1,4 +1,6 @@
 # hnrijs-dwm
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f096a699-1647-4ac0-876d-8ce495f5fca0" />
+
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/df32987b-d6b9-4dac-8892-32fb6dcd2ac9" />
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f40e26bb-d081-46bd-a418-6645acd5c4bd" />
@@ -19,4 +21,4 @@ chmod +x install.sh
 # 3. Reboot your system to apply all changes and services
 sudo reboot
 ```
-dwm not for me
+I only like the wallpaper. DWM not for me.
