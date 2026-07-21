@@ -19,7 +19,6 @@ echo "Creating user directories..."
 mkdir -p "$HOME/Documents" "$HOME/Music" "$HOME/Downloads" "$HOME/Pictures" "$HOME/Videos" "$HOME/.config"
 
 # 2. Update system and install official pacman packages
-# (Only essential fonts: ttf-jetbrains-mono-nerd and noto-fonts-emoji)
 echo "Installing official pacman packages..."
 sudo pacman -S --needed --noconfirm \
     base-devel wget xorg-server xorg-xinit libx11 libxft libxinerama \
@@ -79,9 +78,9 @@ echo "Setting up X11 startup scripts..."
 cat << 'EOF' > "$HOME/.xinitrc"
 #!/bin/bash
 
-# Autostart background processes
-dex --autostart --environment dwm &
+# Autostart background processes & wallpaper
 feh --bg-scale "$HOME/Pictures/main.png" &
+dex --autostart --environment dwm &
 nm-applet &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
@@ -99,6 +98,15 @@ EOF
 
 cp "$HOME/.xinitrc" "$HOME/.xsession"
 chmod +x "$HOME/.xinitrc" "$HOME/.xsession"
+
+# Izveidojam arī sakārtotu .xprofile, ja kāda programma to pieprasa
+cat << 'EOF' > "$HOME/.xprofile"
+#!/bin/bash
+feh --bg-scale "$HOME/Pictures/main.png" &
+nm-applet &
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+EOF
+chmod +x "$HOME/.xprofile"
 
 # 8. Create xsessions entry for LightDM
 echo "Creating DWM desktop session for LightDM..."
@@ -135,8 +143,6 @@ sudo systemctl enable --now power-profiles-daemon
 sudo systemctl enable --now NetworkManager
 sudo systemctl enable lightdm
 
-
-echo " Installation Complete! Rebooting in 5 seconds..."
-
+echo "Installation Complete! Rebooting in 5 seconds..."
 sleep 5
 sudo reboot
