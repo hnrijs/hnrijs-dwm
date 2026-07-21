@@ -77,37 +77,66 @@ cd "$SCRIPT_DIR"
 # 7. Setup DWM startup files (.xinitrc and .xsession)
 echo "Setting up X11 startup scripts..."
 cat << 'EOF' > "$HOME/.xinitrc"
+#!/bin/bash
+
+# Autostart background processes
+dex --autostart --environment dwm &
+feh --bg-scale "$HOME/Pictures/main.png" &
+nm-applet &
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
+# Update DWM status bar using your script
+while true; do
+    if [ -f "$HOME/.config/scripts/status_power.sh" ]; then
+        xsetroot -name "$($HOME/.config/scripts/status_power.sh)"
+    fi
+    sleep 1
+done &
+
+# Launch DWM
 exec dwm
 EOF
 
-cat << 'EOF' > "$HOME/.xsession"
-exec dwm
-EOF
-
+cp "$HOME/.xinitrc" "$HOME/.xsession"
 chmod +x "$HOME/.xinitrc" "$HOME/.xsession"
 
-# 8. Copy wallpaper to Pictures directory
+# 8. Create xsessions entry for LightDM
+echo "Creating DWM desktop session for LightDM..."
+sudo mkdir -p /usr/share/xsessions
+cat << 'EOF' | sudo tee /usr/share/xsessions/dwm.desktop > /dev/null
+[Desktop Entry]
+Name=dwm
+Comment=Dynamic Window Manager
+Exec=dwm
+Type=Application
+X-LightDM-DesktopName=dwm
+DesktopNames=dwm
+EOF
+
+# 9. Copy wallpaper to Pictures directory
 if [ -f "$SCRIPT_DIR/main.png" ]; then
     echo "Copying wallpaper to $HOME/Pictures/main.png..."
     cp "$SCRIPT_DIR/main.png" "$HOME/Pictures/main.png"
 fi
 
-# 9. Make custom scripts executable
+# 10. Make custom scripts executable
 if [ -d "$HOME/.config/scripts" ]; then
     chmod +x "$HOME/.config/scripts/"*
 fi
 
-# 10. Dynamically fix home paths in configs for current user
+# 11. Dynamically fix home paths in configs for current user
 echo "Fixing home directory paths for $USER..."
 find "$HOME/.config" -type f -exec sed -i "s|/home/[^/]*|$HOME|g" {} + 2>/dev/null || true
 
-# 11. Enable system and user services
+# 12. Enable system and user services
 echo "Enabling services..."
 systemctl --user enable --now greenclip.service || true
 sudo systemctl enable --now power-profiles-daemon
 sudo systemctl enable --now NetworkManager
 sudo systemctl enable lightdm
 
+
 echo " Installation Complete! Rebooting in 5 seconds..."
+
 sleep 5
 sudo reboot
