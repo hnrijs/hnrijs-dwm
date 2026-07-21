@@ -23,9 +23,9 @@ echo "Installing official pacman packages..."
 sudo pacman -S --needed --noconfirm \
     base-devel wget xorg-server xorg-xinit libx11 libxft libxinerama \
     feh thunar rofi imv cava btop playerctl alacritty zip unzip polkit-gnome \
-    xclip maim power-profiles-daemon ttf-jetbrains-mono-nerd noto-fonts-emoji \
+    xclip maim ttf-jetbrains-mono-nerd noto-fonts-emoji \
     gtk3 fastfetch pavucontrol nwg-look mpv brightnessctl xsettingsd micro \
-    networkmanager network-manager-applet lightdm lightdm-gtk-greeter
+    networkmanager network-manager-applet lightdm lightdm-gtk-greeter nano
 
 # 3. Check and install yay AUR helper
 if ! command -v yay &> /dev/null; then
@@ -38,9 +38,9 @@ if ! command -v yay &> /dev/null; then
     rm -rf /tmp/yay-build
 fi
 
-# 4. Install AUR packages
+# 4. Install AUR packages (including slstatus)
 echo "Installing AUR packages..."
-yay -S --noconfirm helium-browser-bin rofi-greenclip
+yay -S --noconfirm helium-browser-bin rofi-greenclip slstatus
 
 # 5. Copy configuration files (.config directory)
 echo "Copying config files to $HOME/.config/..."
@@ -73,7 +73,7 @@ fi
 
 cd "$SCRIPT_DIR"
 
-# 7. Setup DWM startup files (.xinitrc and .xsession)
+# 7. Setup DWM startup files (.xinitrc and .xsession) with slstatus
 echo "Setting up X11 startup scripts..."
 cat << 'EOF' > "$HOME/.xinitrc"
 #!/bin/bash
@@ -84,13 +84,8 @@ dex --autostart --environment dwm &
 nm-applet &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 
-# Update DWM status bar using your script
-while true; do
-    if [ -f "$HOME/.config/scripts/status_power.sh" ]; then
-        xsetroot -name "$($HOME/.config/scripts/status_power.sh)"
-    fi
-    sleep 1
-done &
+# Start slstatus for date and time in the status bar
+slstatus &
 
 # Launch DWM
 exec dwm
@@ -99,12 +94,13 @@ EOF
 cp "$HOME/.xinitrc" "$HOME/.xsession"
 chmod +x "$HOME/.xinitrc" "$HOME/.xsession"
 
-# Izveidojam arī sakārtotu .xprofile, ja kāda programma to pieprasa
+# Setup .xprofile
 cat << 'EOF' > "$HOME/.xprofile"
 #!/bin/bash
 feh --bg-scale "$HOME/Pictures/main.png" &
 nm-applet &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+slstatus &
 EOF
 chmod +x "$HOME/.xprofile"
 
@@ -139,7 +135,6 @@ find "$HOME/.config" -type f -exec sed -i "s|/home/[^/]*|$HOME|g" {} + 2>/dev/nu
 # 12. Enable system and user services
 echo "Enabling services..."
 systemctl --user enable --now greenclip.service || true
-sudo systemctl enable --now power-profiles-daemon
 sudo systemctl enable --now NetworkManager
 sudo systemctl enable lightdm
 
