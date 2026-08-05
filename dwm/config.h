@@ -1,11 +1,8 @@
-/* See LICENSE file for copyright and license details. */
-
-/* appearance */
 static const unsigned int borderpx  = 2;
 static const unsigned int snap      = 32;
 static const int showbar            = 1;
 static const int topbar             = 1;
-static const unsigned int refreshrate = 120;
+static const unsigned int refreshrate = 120; 
 static const char *fonts[]          = { "JetBrainsMono Nerd Font:size=10" };
 static const char dmenufont[]       = "JetBrainsMono Nerd Font:size=10";
 
@@ -13,34 +10,28 @@ static const char col_bg[]          = "#000000";
 static const char col_fg[]          = "#888888";
 static const char col_fg_active[]   = "#FFFFFF";
 
-static const char *colors[][3]      = {
-	/*                   fg         bg          border   */
+static const char *colors[]      = {
 	[SchemeNorm] = { col_fg,    col_bg,     "#333333" },
 	[SchemeSel]  = { col_fg_active, col_bg, "#FFFFFF" },
 };
 
-/* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 
 static const Rule rules[] = {
-	/* class     instance    title       tags mask     isfloating   monitor */
 	{ "Pavucontrol", NULL,    NULL,       0,            1,           -1 },
 };
 
-/* layout(s) */
 static const float mfact     = 0.55;
 static const int nmaster     = 1;
 static const int resizehints = 1;
 static const int lockfullscreen = 1;
 
 static const Layout layouts[] = {
-	/* symbol     arrange function */
-	{ "[]=",      tile },
-	{ "><>",      NULL },
+	{ "[]=",      tile },    
+	{ "><>",      NULL },    
 	{ "[M]",      monocle },
 };
 
-/* key definitions */
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
@@ -52,7 +43,7 @@ static const Layout layouts[] = {
 
 #include <X11/XF86keysym.h>
 
-static char dmenumon[2] = "0"; 
+static char dmenumon[] = "0"; 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_bg, "-nf", col_fg, "-sb", col_fg_active, "-sf", col_bg, NULL };
 
 static const char *termcmd[]        = { "st", NULL };
@@ -60,46 +51,36 @@ static const char *roficmd[]        = { "rofi", "-show", "run", NULL };
 static const char *thunarcmd[]      = { "thunar", NULL };
 static const char *browsercmd[]     = { "helium", NULL };
 static const char *pavucmd[]        = { "pavucontrol", NULL };
-static const char *nmtuicmd[]       = { "st", "-g", "80x24", "-e", "nmtui", NULL };
-
-static const char *lockcmd[]        = { "sh", "-c", "$HOME/.config/scripts/i3exit.sh lock", NULL };
-static const char *powermenu[]      = { "sh", "-c", "$HOME/.config/scripts/rofi-powermenu.sh", NULL };
-static const char *powerprof[]      = { "sh", "-c", "$HOME/.config/scripts/power_profile.sh", NULL };
-static const char *sysupdate[]      = { "st", "-e", "sh", "-c", "$HOME/.config/scripts/system_update.sh", NULL };
-static const char *sysclean[]       = { "st", "-e", "sh", "-c", "$HOME/.config/scripts/system_clean.sh", NULL };
-
-static const char *screenshot[]     = { "sh", "-c", "maim -s | xclip -selection clipboard -t image/png", NULL };
 static const char *clipmenu[]       = { "clipmenu", NULL };
 
 static const char *volup[]          = { "sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ +5%", NULL };
 static const char *voldown[]        = { "sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ -5%", NULL };
 static const char *volmute[]        = { "sh", "-c", "pactl set-sink-mute @DEFAULT_SINK@ toggle", NULL };
 static const char *micmute[]        = { "sh", "-c", "pactl set-source-mute @DEFAULT_SOURCE@ toggle", NULL };
-static const char *brightup[]       = { "brightnessctl", "set", "+5%", NULL };
-static const char *brightdown[]     = { "brightnessctl", "set", "5%-", NULL };
+static const char *brightup[]       = { "xbacklight", "-inc", "5", NULL };
+static const char *brightdown[]     = { "xbacklight", "-dec", "5", NULL };
 static const char *mediaplay[]      = { "playerctl", "play-pause", NULL };
 
 static const Key keys[] = {
-	/* Applications */
 	{ MODKEY,                       XK_Return,          spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_space,           spawn,          {.v = roficmd } },
 	{ MODKEY,                       XK_f,               spawn,          {.v = thunarcmd } },
 	{ MODKEY,                       XK_b,               spawn,          {.v = browsercmd } },
 	{ MODKEY|ShiftMask,             XK_a,               spawn,          {.v = pavucmd } },
-	{ MODKEY|ShiftMask,             XK_n,               spawn,          {.v = nmtuicmd } },
 
-	/* Scripts & Power */
-	{ MODKEY|ShiftMask,             XK_L,               spawn,          {.v = lockcmd } },
-	{ MODKEY,                       XK_Escape,          spawn,          {.v = powermenu } },
-	{ MODKEY|ShiftMask,             XK_p,               spawn,          {.v = powerprof } },
-	{ MODKEY|ShiftMask,             XK_u,               spawn,          {.v = sysupdate } },
-	{ MODKEY|ShiftMask,             XK_c,               spawn,          {.v = sysclean } },
+	{ MODKEY|ShiftMask,             XK_s,               spawn,          SHCMD("mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/scr_$(date +%s).png && maim -s \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"") },
+	{ MODKEY|ShiftMask,             XK_x,               spawn,          SHCMD("mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/scr_$(date +%s).png && maim \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"") },
+	{ MODKEY|ShiftMask,             XK_p,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/power_profile.sh'") },
+	{ MODKEY|ShiftMask,             XK_o,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/ocr.sh'") },        
+	{ MODKEY|ShiftMask,             XK_g,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/screen_search.sh'") }, 
+	{ MODKEY,                       XK_Escape,          spawn,          SHCMD("sh -c '$HOME/.config/scripts/rofi-powermenu.sh'") },
+	{ MODKEY|ShiftMask,             XK_u,               spawn,          SHCMD("st -e sh -c '$HOME/.config/scripts/system_update.sh; echo \"Press [Enter] to close...\"; read'") },
+	{ MODKEY|ShiftMask,             XK_c,               spawn,          SHCMD("st -e sh -c '$HOME/.config/scripts/system_clean.sh; echo \"Press [Enter] to close...\"; read'") },
+	{ MODKEY|ShiftMask,             XK_n,               spawn,          SHCMD("st -e nmtui") },
+	{ MODKEY|ShiftMask,             XK_m,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/sysmenu.sh'") },    
 
-	/* Utilities */
-	{ MODKEY|ShiftMask,             XK_s,               spawn,          {.v = screenshot } },
 	{ MODKEY,                       XK_v,               spawn,          {.v = clipmenu } },
 
-	/* Hardware Keys */
 	{ 0,                            XF86XK_AudioRaiseVolume, spawn,     {.v = volup } },
 	{ 0,                            XF86XK_AudioLowerVolume, spawn,     {.v = voldown } },
 	{ 0,                            XF86XK_AudioMute,        spawn,     {.v = volmute } },
@@ -108,24 +89,20 @@ static const Key keys[] = {
 	{ 0,                            XF86XK_MonBrightnessDown, spawn,    {.v = brightdown } },
 	{ 0,                            XF86XK_AudioPlay,        spawn,     {.v = mediaplay } },
 
-	/* Layout & Window Controls */
 	{ MODKEY,                       XK_q,               killclient,     {0} },
 	{ MODKEY,                       XK_Up,              focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_Down,            focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_w,               setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_s,               setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_m,               setlayout,      {.v = &layouts[2]} }, 
+	{ MODKEY,                       XK_t,               setlayout,      {.v = &layouts[0]} }, 
 	{ MODKEY,                       XK_z,               togglefloating, {0} },
-	{ MODKEY,                       XK_e,               zoom,           {0} },
+	{ MODKEY,                       XK_e,               zoom,           {0} },                
 	
-	/* Master/Stack & Resizing Controls */
 	{ MODKEY,                       XK_Left,            setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_Right,           setmfact,       {.f = +0.05} },
 	{ MODKEY|ShiftMask,             XK_b,               togglebar,      {0} },
 
-	/* Quit DWM */
-	{ MODKEY|ShiftMask,             XK_e,               quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_q,               quit,           {0} },                
 
-	/* Workspaces (1-10) */
 	TAGKEYS(                        XK_1,                               0)
 	TAGKEYS(                        XK_2,                               1)
 	TAGKEYS(                        XK_3,                               2)
@@ -138,7 +115,6 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_0,                               9)
 };
 
-/* button definitions */
 static const Button buttons[] = {
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
