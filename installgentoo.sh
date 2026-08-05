@@ -9,16 +9,20 @@ echo "Starting minimal automated Gentoo installation..."
 echo "Creating user directories..."
 mkdir -p "$HOME/Documents" "$HOME/Music" "$HOME/Downloads" "$HOME/Pictures" "$HOME/Videos" "$HOME/.config"
 
+echo "Accepting testing keyword for micro text editor..."
+sudo mkdir -p /etc/portage/package.accept_keywords
+echo "app-editors/micro ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/editors > /dev/null
+
 echo "Updating Portage world requirements..."
 sudo emerge --ask=n --noreplace \
     x11-base/xorg-server x11-apps/xinit x11-apps/xrandr x11-libs/libXinerama x11-libs/libXft \
     media-fonts/liberation-fonts media-fonts/symbols-nerd-font x11-misc/rofi media-gfx/feh \
-    xfce-base/thunar xfce-extra/tumblr sys-fs/udisks x11-themes/adwaita-icon-theme \
+    xfce-base/thunar xfce-base/tumbler sys-fs/udisks x11-themes/adwaita-icon-theme \
     media-gfx/imv media-video/mpv media-sound/pavucontrol x11-misc/dunst \
-    x11-misc/clipmenu x11-misc/xsel x11-misc/xclip sys-auth/lxqt-policykit \
-    media-sound/playerctl sys-power/brightnessctl media-sound/cava sys-process/btop \
+    x11-misc/clipmenu x11-misc/xsel x11-misc/xclip lxqt-base/lxqt-policykit \
+    media-sound/playerctl sys-power/acpilight media-sound/cava sys-process/btop \
     app-arch/zip app-arch/unzip app-editors/micro app-editors/nano \
-    x11-misc/slstatus media-gfx/maim x11-misc/picom
+    media-gfx/maim x11-misc/picom sys-power/power-profiles-daemon
 
 echo "Copying config files to $HOME/.config/..."
 if [ -d "$SCRIPT_DIR/config" ]; then
@@ -77,7 +81,11 @@ picom &
 thunar --daemon &
 dunst &
 clipmenud &
-slstatus &
+
+while true; do
+    xsetroot -name "$(date '+%Y-%m-%d %H:%M')"
+    sleep 60
+done &
 
 /usr/libexec/lxqt-policykit-agent &
 
@@ -98,4 +106,8 @@ fi
 echo "Fixing home directory paths for $USER..."
 find "$HOME/.config" -type f -exec sed -i "s|/home/[^/]*|$HOME|g" {} + 2>/dev/null || true
 
+echo "Enabling background system daemons..."
+sudo systemctl enable power-profiles-daemon.service
+systemctl enable NetworkManager
+systemctl enable systemd-timesyncd
 echo "Installation Complete! Type 'startx' to enter your clean DWM environment."
