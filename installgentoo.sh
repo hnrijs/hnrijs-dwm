@@ -22,7 +22,7 @@ sudo emerge --ask=n --noreplace \
     x11-misc/clipmenu x11-misc/xsel x11-misc/xclip lxqt-base/lxqt-policykit \
     media-sound/playerctl sys-power/acpilight media-sound/cava sys-process/btop \
     app-arch/zip app-arch/unzip app-editors/micro app-editors/nano \
-    media-gfx/maim x11-misc/picom sys-power/power-profiles-daemon
+    media-gfx/maim x11-misc/picom sys-power/power-profiles-daemon app-editors/micro 
 
 echo "Copying config files to $HOME/.config/..."
 if [ -d "$SCRIPT_DIR/config" ]; then
