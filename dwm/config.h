@@ -55,22 +55,21 @@ static const Layout layouts[] = {
 static char dmenumon[2] = "0"; 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_bg, "-nf", col_fg, "-sb", col_fg_active, "-sf", col_bg, NULL };
 
-static const char *termcmd[]        = { "alacritty", NULL };
+static const char *termcmd[]        = { "st", NULL };
 static const char *roficmd[]        = { "rofi", "-show", "run", NULL };
 static const char *thunarcmd[]      = { "thunar", NULL };
-static const char *browsercmd[]     = { "helium-browser", NULL };
+static const char *browsercmd[]     = { "helium", NULL };
 static const char *pavucmd[]        = { "pavucontrol", NULL };
-static const char *nmtuicmd[]       = { "alacritty", "--class", "nmtui", "-e", "nmtui", NULL };
+static const char *nmtuicmd[]       = { "st", "-g", "80x24", "-e", "nmtui", NULL };
 
-static const char *lockcmd[]        = { "/home/h/.config/scripts/i3exit.sh", "lock", NULL };
-static const char *powermenu[]      = { "/home/h/.config/scripts/rofi-powermenu.sh", NULL };
-static const char *powerprof[]      = { "/home/h/.config/scripts/power_profile.sh", NULL };
-static const char *sysupdate[]      = { "alacritty", "-e", "/home/h/.config/scripts/system_update.sh", NULL };
-static const char *sysclean[]       = { "alacritty", "-e", "/home/h/.config/scripts/system_clean.sh", NULL };
+static const char *lockcmd[]        = { "sh", "-c", "$HOME/.config/scripts/i3exit.sh lock", NULL };
+static const char *powermenu[]      = { "sh", "-c", "$HOME/.config/scripts/rofi-powermenu.sh", NULL };
+static const char *powerprof[]      = { "sh", "-c", "$HOME/.config/scripts/power_profile.sh", NULL };
+static const char *sysupdate[]      = { "st", "-e", "sh", "-c", "$HOME/.config/scripts/system_update.sh", NULL };
+static const char *sysclean[]       = { "st", "-e", "sh", "-c", "$HOME/.config/scripts/system_clean.sh", NULL };
 
 static const char *screenshot[]     = { "sh", "-c", "maim -s | xclip -selection clipboard -t image/png", NULL };
-static const char *clipmenu[]       = { "sh", "-c", "rofi -modi \"clipboard:greenclip print\" -show clipboard -run-command \"{cmd}\"", NULL };
-static const char *clipclear[]      = { "greenclip", "clear", NULL };
+static const char *clipmenu[]       = { "clipmenu", NULL };
 
 static const char *volup[]          = { "sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ +5%", NULL };
 static const char *voldown[]        = { "sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ -5%", NULL };
@@ -99,7 +98,6 @@ static const Key keys[] = {
 	/* Utilities */
 	{ MODKEY|ShiftMask,             XK_s,               spawn,          {.v = screenshot } },
 	{ MODKEY,                       XK_v,               spawn,          {.v = clipmenu } },
-	{ MODKEY|ShiftMask,             XK_v,               spawn,          {.v = clipclear } },
 
 	/* Hardware Keys */
 	{ 0,                            XF86XK_AudioRaiseVolume, spawn,     {.v = volup } },
