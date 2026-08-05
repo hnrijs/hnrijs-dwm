@@ -52,6 +52,17 @@ fi
 
 cd "$SCRIPT_DIR"
 
+echo "Disabling mouse acceleration globally..."
+sudo mkdir -p /etc/X11/xorg.conf.d
+cat << 'EOF' | sudo tee /etc/X11/xorg.conf.d/50-mouse-acceleration.conf > /dev/null
+Section "InputClass"
+    Identifier "My Mouse"
+    MatchIsPointer "yes"
+    Option "AccelProfile" "flat"
+    Option "AccelSpeed" "0"
+EndSection
+EOF
+
 echo "Setting up X11 startup script (~/.xinitrc)..."
 cat << 'EOF' > "$HOME/.xinitrc"
 #!/bin/sh
