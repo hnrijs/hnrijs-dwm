@@ -66,12 +66,17 @@ cd slstatus
 
 # Generate custom slstatus config
 cat << 'EOF' > config.h
-#include "components.h"
+/* interval between updates (in ms) */
+const unsigned int interval = 1000;
+
+/* text to show if no value can be retrieved */
 static const char unknown_str[] = "n/a";
-static const unsigned int interval = 1000;
+
+/* maximum output string length */
+#define MAXLEN 2048
+
 static const struct arg args[] = {
     /* function     format               argument */
-    { run_command,  " %s | ",            "playerctl metadata --format '♫ {{ artist }} - {{ title }}' 2>/dev/null || echo 'No Media'" },
     { disk_perc,    "FS %s%% | ",        "/" },
     { ram_perc,     "RAM %s%% | ",       NULL },
     { cpu_perc,     "CPU %s%% | ",       NULL },
