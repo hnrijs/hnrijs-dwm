@@ -16,7 +16,7 @@ sudo mkdir -p /etc/portage/package.accept_keywords
 echo "app-editors/micro ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/editors > /dev/null
 echo "x11-misc/slstatus ~amd64" | sudo tee /etc/portage/package.accept_keywords/slstatus
 
-# 3. Install official Gentoo packages (including LightDM, Pipewire, and requested fonts)
+# 3. Install official Gentoo packages
 echo "Installing official Gentoo packages..."
 sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-base/xorg-server x11-apps/xinit x11-apps/xrandr x11-libs/libXinerama x11-libs/libXft \
@@ -27,11 +27,11 @@ sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip gnome-extra/polkit-gnome \
     media-sound/playerctl media-sound/cava sys-process/btop \
     app-arch/zip app-arch/unzip app-editors/micro app-editors/nano \
-    media-gfx/maim sys-power/power-profiles-daemon \
+    media-gfx/maim sys-power/power-profiles-daemon sys-power/brightnessctl \
     x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
     media-video/pipewire media-video/wireplumber \
     sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk \
-    x11-misc/slock x11-terms/alacritty net-misc/curl x11-misc/slstatus \
+    x11-terms/alacritty net-misc/curl x11-misc/slstatus \
     net-wireless/wireless-tools
 
 # 4. Copy configuration files to ~/.config
@@ -54,17 +54,33 @@ else
     echo "Error: dwm directory not found in repository!"
 fi
 
-cd "$SCRIPT_DIR"
+# 6. Compile and install custom slock (Full Black)
+echo "Cloning and configuring slock..."
+cd "$HOME"
+if [ ! -d "$HOME/slock" ]; then
+    git clone https://git.suckless.org/slock
+fi
+cd slock
+cat << 'EOF' > config.h
+static const char *colorname[NUMCOLS] = {
+    [INIT] =   "#000000",   /* after initialization */
+    [INPUT] =  "#000000",   /* during input */
+    [FAILED] = "#000000",   /* wrong password */
+};
+/* treat a cleared input like a wrong password */
+static const int failonclear = 1;
+EOF
+sudo make clean install
+sudo chmod u+s /usr/local/bin/slock
+sudo chown -R "$USER:$USER" "$HOME/slock"
 
-# 6. Compile and install custom slstatus (Polybar alternative)
+# 7. Compile and install custom slstatus (Polybar alternative)
 echo "Cloning and configuring slstatus..."
 cd "$HOME"
 if [ ! -d "$HOME/slstatus" ]; then
     git clone https://git.suckless.org/slstatus
 fi
 cd slstatus
-
-# Generate custom slstatus config
 cat << 'EOF' > config.h
 /* interval between updates (in ms) */
 const unsigned int interval = 1000;
@@ -81,6 +97,8 @@ static const struct arg args[] = {
     { ram_perc,     "RAM %s%% | ",       NULL },
     { cpu_perc,     "CPU %s%% | ",       NULL },
     { run_command,  "PWR %s | ",         "powerprofilesctl get 2>/dev/null | sed 's/power-saver/S/;s/balanced/B/;s/performance/P/'" },
+    { run_command,  "NET %s | ",         "nmcli -t -f NAME connection show --active 2>/dev/null | head -n1 || echo 'OFF'" },
+    { run_command,  "BT %s | ",          "bluetoothctl show 2>/dev/null | grep -q 'Powered: yes' && echo 'ON' || echo 'OFF'" },
     { run_command,  "VPN %s | ",         "ip link show up 2>/dev/null | grep -qE 'tun[0-9]+|wg[0-9]+|proton|pvpn' && echo 'ON' || echo 'OFF'" },
     { run_command,  "VOL %s | ",         "pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | grep -o '[0-9]*%' | head -n 1" },
     { battery_perc, "BAT %s%% | ",       "BAT1" },
@@ -88,13 +106,12 @@ static const struct arg args[] = {
     { datetime,     "%s ",               "%Y-%m-%d %H:%M" },
 };
 EOF
-
 sudo make clean install
 sudo chown -R "$USER:$USER" "$HOME/slstatus"
 
 cd "$SCRIPT_DIR"
 
-# 7. Disable mouse acceleration globally for X11
+# 8. Disable mouse acceleration globally for X11
 echo "Disabling mouse acceleration globally..."
 sudo mkdir -p /etc/X11/xorg.conf.d
 cat << 'EOF' | sudo tee /etc/X11/xorg.conf.d/50-mouse-acceleration.conf > /dev/null
@@ -106,7 +123,7 @@ Section "InputClass"
 EndSection
 EOF
 
-# 8. Set up ~/.xprofile (Executed by LightDM before starting the window manager)
+# 9. Set up ~/.xprofile (Executed by LightDM before starting the window manager)
 echo "Setting up X11 startup script (.xprofile)..."
 cat << 'EOF' > "$HOME/.xprofile"
 #!/bin/sh
@@ -133,12 +150,11 @@ $HOME/.config/scripts/screen.sh &
 EOF
 chmod +x "$HOME/.xprofile"
 
-# 9. Set up ~/.xinitrc (Fallback for manual 'startx' usage)
+# 10. Set up ~/.xinitrc (Fallback for manual 'startx' usage)
 echo "Setting up X11 startup script (.xinitrc)..."
 cat << 'EOF' > "$HOME/.xinitrc"
 #!/bin/sh
 
-# Source .xprofile if it exists so we don't duplicate startup logic
 if [ -f "$HOME/.xprofile" ]; then
     . "$HOME/.xprofile"
 fi
@@ -147,7 +163,7 @@ exec dbus-run-session dwm
 EOF
 chmod +x "$HOME/.xinitrc"
 
-# 10. Create desktop session entry for LightDM to recognize DWM
+# 11. Create desktop session entry for LightDM to recognize DWM
 echo "Creating DWM desktop session for LightDM..."
 sudo mkdir -p /usr/share/xsessions
 cat << EOF | sudo tee /usr/share/xsessions/dwm.desktop > /dev/null
@@ -160,20 +176,16 @@ X-LightDM-DesktopName=dwm
 DesktopNames=dwm
 EOF
 
-# 11. Copy wallpaper if present
+# 12. Copy wallpaper if present
 if [ -f "$SCRIPT_DIR/main.png" ]; then
     echo "Copying wallpaper to $HOME/Pictures/main.png..."
     cp "$SCRIPT_DIR/main.png" "$HOME/Pictures/main.png"
 fi
 
-# 12. Ensure local user scripts are executable
+# 13. Ensure local user scripts are executable
 if [ -d "$HOME/.config/scripts" ]; then
     chmod +x "$HOME/.config/scripts/"*
 fi
-
-# 13. Dynamically fix home directory paths in configs
-echo "Fixing home directory paths for $USER..."
-find "$HOME/.config" -type f -exec sed -i "s|/home/[^/]*|$HOME|g" {} + 2>/dev/null || true
 
 # 14. Enable system daemons via Systemd
 echo "Enabling system daemons..."
