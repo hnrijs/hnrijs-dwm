@@ -30,7 +30,7 @@ sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
     media-video/pipewire media-video/wireplumber \
     sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk \
-    x11-misc/slock x11-terms/alacritty net-misc/curl x11-misc/polybar
+    x11-misc/slock x11-terms/alacritty net-misc/curl x11-apps/xsetroot
 
 # 4. Copy configuration files to ~/.config
 echo "Copying config files to $HOME/.config/..."
