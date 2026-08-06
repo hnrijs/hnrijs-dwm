@@ -158,6 +158,7 @@ sudo systemctl enable power-profiles-daemon.service
 sudo systemctl enable NetworkManager.service
 sudo systemctl enable systemd-timesyncd.service
 sudo systemctl enable lightdm.service
+systemctl enable fstrim.timer
 
 # 15. Enable user-level audio services for Pipewire and Wireplumber
 echo "Enabling user audio services..."
