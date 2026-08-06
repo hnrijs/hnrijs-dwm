@@ -1,8 +1,11 @@
+/* See LICENSE file for copyright and license details. */
+
+/* appearance */
 static const unsigned int borderpx  = 2;
 static const unsigned int snap      = 32;
 static const int showbar            = 1;
 static const int topbar             = 1;
-static const unsigned int refreshrate = 120; 
+static const unsigned int refreshrate = 120;
 static const char *fonts[]          = { "JetBrainsMono Nerd Font:size=10" };
 static const char dmenufont[]       = "JetBrainsMono Nerd Font:size=10";
 
@@ -10,112 +13,134 @@ static const char col_bg[]          = "#000000";
 static const char col_fg[]          = "#888888";
 static const char col_fg_active[]   = "#FFFFFF";
 
-static const char *colors[]      = {
+static const char *colors[][3]      = {
+	/*                   fg         bg          border   */
 	[SchemeNorm] = { col_fg,    col_bg,     "#333333" },
 	[SchemeSel]  = { col_fg_active, col_bg, "#FFFFFF" },
 };
 
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+/* tagging */
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
 static const Rule rules[] = {
-	{ "Pavucontrol", NULL,    NULL,       0,            1,           -1 },
+	/* xprop(1):
+	 *	WM_CLASS(STRING) = instance, class
+	 *	WM_NAME(STRING) = title
+	 */
+	/* class      instance    title       tags mask     isfloating   monitor */
+	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
+	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
 
-static const float mfact     = 0.55;
-static const int nmaster     = 1;
-static const int resizehints = 1;
-static const int lockfullscreen = 1;
+/* layout(s) */
+static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static const int nmaster     = 1;    /* number of clients in master area */
+static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
+static const int refreshrate = 120;  /* refresh rate (per second) for client move/resize */
 
 static const Layout layouts[] = {
-	{ "[]=",      tile },    
-	{ "><>",      NULL },    
+	/* symbol     arrange function */
+	{ "[]=",      tile },    /* first entry is default */
+	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 };
 
-#define MODKEY Mod4Mask
+/* key definitions */
+#define MODKEY Mod1Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
 	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
+/* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
-#include <X11/XF86keysym.h>
-
-static char dmenumon[] = "0"; 
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_bg, "-nf", col_fg, "-sb", col_fg_active, "-sf", col_bg, NULL };
-
-static const char *termcmd[]        = { "st", NULL };
+/* commands */
+static const char *termcmd[]  = { "st", NULL };
 static const char *roficmd[]        = { "rofi", "-show", "run", NULL };
 static const char *thunarcmd[]      = { "thunar", NULL };
-static const char *browsercmd[]     = { "helium", NULL };
+static const char *browsercmd[]     = { "firefox-bin", NULL };
 static const char *pavucmd[]        = { "pavucontrol", NULL };
-static const char *clipmenu[]       = { "clipmenu", NULL };
-
-static const char *volup[]          = { "sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ +5%", NULL };
-static const char *voldown[]        = { "sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ -5%", NULL };
-static const char *volmute[]        = { "sh", "-c", "pactl set-sink-mute @DEFAULT_SINK@ toggle", NULL };
-static const char *micmute[]        = { "sh", "-c", "pactl set-source-mute @DEFAULT_SOURCE@ toggle", NULL };
-static const char *brightup[]       = { "xbacklight", "-inc", "5", NULL };
-static const char *brightdown[]     = { "xbacklight", "-dec", "5", NULL };
-static const char *mediaplay[]      = { "playerctl", "play-pause", NULL };
+static const char *nmtuicmd[]       = { "st", "--class", "nmtui", "-e", "nmtui", NULL };
+static const char *lockcmd[]        = { "slock", NULL };
+static const char *powermenu[]      = { "sh -c '$HOME/.config/scripts/rofi-powermenu.sh'", NULL };
+static const char *powerprof[]      = { "sh -c '$HOME/.config/scripts/power_profile.sh'", NULL };
+static const char *sysupdate[]      = { "st", "-e", "$HOME/.config/scripts/system_update.sh", NULL };
+static const char *sysclean[]       = { "st", "-e", "$HOME/.config/scripts/system_clean.sh", NULL };
+static const char *screenshot[]     = { "sh", "-c", "maim -s | xclip -selection clipboard -t image/png", NULL };
+static const char *screenall[]      = { "sh -c 'mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/scr_$(date +%s).png && maim \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"'", NULL };
+static const char *screensrc[]      = { "sh -c '$HOME/.config/scripts/screen_search.sh'", NULL };
 
 static const Key keys[] = {
+	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_Return,          spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_space,           spawn,          {.v = roficmd } },
 	{ MODKEY,                       XK_f,               spawn,          {.v = thunarcmd } },
 	{ MODKEY,                       XK_b,               spawn,          {.v = browsercmd } },
 	{ MODKEY|ShiftMask,             XK_a,               spawn,          {.v = pavucmd } },
+	{ MODKEY|ShiftMask,             XK_n,               spawn,          {.v = nmtuicmd } },
 
-	{ MODKEY|ShiftMask,             XK_s,               spawn,          SHCMD("mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/scr_$(date +%s).png && maim -s \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"") },
-	{ MODKEY|ShiftMask,             XK_x,               spawn,          SHCMD("mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/scr_$(date +%s).png && maim \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"") },
-	{ MODKEY|ShiftMask,             XK_p,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/power_profile.sh'") },
-	{ MODKEY|ShiftMask,             XK_o,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/ocr.sh'") },        
-	{ MODKEY|ShiftMask,             XK_g,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/screen_search.sh'") }, 
-	{ MODKEY,                       XK_Escape,          spawn,          SHCMD("sh -c '$HOME/.config/scripts/rofi-powermenu.sh'") },
-	{ MODKEY|ShiftMask,             XK_u,               spawn,          SHCMD("st -e sh -c '$HOME/.config/scripts/system_update.sh; echo \"Press [Enter] to close...\"; read'") },
-	{ MODKEY|ShiftMask,             XK_c,               spawn,          SHCMD("st -e sh -c '$HOME/.config/scripts/system_clean.sh; echo \"Press [Enter] to close...\"; read'") },
-	{ MODKEY|ShiftMask,             XK_n,               spawn,          SHCMD("st -e nmtui") },
-	{ MODKEY|ShiftMask,             XK_m,               spawn,          SHCMD("sh -c '$HOME/.config/scripts/sysmenu.sh'") },    
+	/* Scripts & Power */
+	{ MODKEY|ShiftMask,             XK_L,               spawn,          {.v = lockcmd } },
+	{ MODKEY,                       XK_Escape,          spawn,          {.v = powermenu } },
+	{ MODKEY|ShiftMask,             XK_p,               spawn,          {.v = powerprof } },
+	{ MODKEY|ShiftMask,             XK_u,               spawn,          {.v = sysupdate } },
+	{ MODKEY|ShiftMask,             XK_c,               spawn,          {.v = sysclean } },
 
-	{ MODKEY,                       XK_v,               spawn,          {.v = clipmenu } },
+	/* Utilities */
+	{ MODKEY|ShiftMask,             XK_s,               spawn,          {.v = screenshot } },
+	{ MODKEY|ShiftMask,             XK_x,               spawn,          {.v = screenall } },
+	{ MODKEY|ShiftMask,             XK_e,               spawn,          {.v = screensrc } },
 
-	{ 0,                            XF86XK_AudioRaiseVolume, spawn,     {.v = volup } },
-	{ 0,                            XF86XK_AudioLowerVolume, spawn,     {.v = voldown } },
-	{ 0,                            XF86XK_AudioMute,        spawn,     {.v = volmute } },
-	{ 0,                            XF86XK_AudioMicMute,     spawn,     {.v = micmute } },
-	{ 0,                            XF86XK_MonBrightnessUp,  spawn,     {.v = brightup } },
-	{ 0,                            XF86XK_MonBrightnessDown, spawn,    {.v = brightdown } },
-	{ 0,                            XF86XK_AudioPlay,        spawn,     {.v = mediaplay } },
-
-	{ MODKEY,                       XK_q,               killclient,     {0} },
-	{ MODKEY,                       XK_Up,              focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_Down,            focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_m,               setlayout,      {.v = &layouts[2]} }, 
-	{ MODKEY,                       XK_t,               setlayout,      {.v = &layouts[0]} }, 
-	{ MODKEY,                       XK_z,               togglefloating, {0} },
-	{ MODKEY,                       XK_e,               zoom,           {0} },                
-	
-	{ MODKEY,                       XK_Left,            setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_Right,           setmfact,       {.f = +0.05} },
-	{ MODKEY|ShiftMask,             XK_b,               togglebar,      {0} },
-
-	{ MODKEY|ShiftMask,             XK_q,               quit,           {0} },                
-
-	TAGKEYS(                        XK_1,                               0)
-	TAGKEYS(                        XK_2,                               1)
-	TAGKEYS(                        XK_3,                               2)
-	TAGKEYS(                        XK_4,                               3)
-	TAGKEYS(                        XK_5,                               4)
-	TAGKEYS(                        XK_6,                               5)
-	TAGKEYS(                        XK_7,                               6)
-	TAGKEYS(                        XK_8,                               7)
-	TAGKEYS(                        XK_9,                               8)
-	TAGKEYS(                        XK_0,                               9)
+	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
+	{ MODKEY,                       XK_Right,  focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_Left,   focusstack,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_h,      incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_g,      incnmaster,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_Left,   setmfact,       {.f = -0.05} },
+	{ MODKEY|ShiftMask,             XK_Right,  setmfact,       {.f = +0.05} },
+	{ MODKEY,                       XK_e,      zoom,           {0} },
+	{ MODKEY,                       XK_Tab,    view,           {0} },
+	{ MODKEY,                       XK_q,      killclient,     {0} },
+	{ MODKEY,                       XK_s,      setlayout,      {.v = &layouts[0]} },
+	{ MODKEY|ShiftMask,             XK_z,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_w,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_space,  setlayout,      {0} },
+	{ MODKEY,                       XK_z,      togglefloating, {0} },
+	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
+	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	TAGKEYS(                        XK_1,                      0)
+	TAGKEYS(                        XK_2,                      1)
+	TAGKEYS(                        XK_3,                      2)
+	TAGKEYS(                        XK_4,                      3)
+	TAGKEYS(                        XK_5,                      4)
+	TAGKEYS(                        XK_6,                      5)
+	TAGKEYS(                        XK_7,                      6)
+	TAGKEYS(                        XK_8,                      7)
+	TAGKEYS(                        XK_9,                      8)
+	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
 
+/* button definitions */
+/* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static const Button buttons[] = {
+	/* click                event mask      button          function        argument */
+	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
+	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
+	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
+	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
+	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+	{ ClkTagBar,            0,              Button1,        view,           {0} },
+	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
+	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
+	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
+
