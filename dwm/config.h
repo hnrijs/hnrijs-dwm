@@ -3,8 +3,8 @@
 /* appearance */
 static const unsigned int borderpx  = 2;
 static const unsigned int snap      = 32;
-static const int showbar            = 1;
-static const int topbar             = 1;
+static const int showbar            = 0;
+static const int topbar             = 0;
 static const unsigned int refreshrate = 120;
 static const char *fonts[]          = { "JetBrainsMono Nerd Font:size=10" };
 static const char dmenufont[]       = "JetBrainsMono Nerd Font:size=10";
