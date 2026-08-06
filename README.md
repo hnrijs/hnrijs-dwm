@@ -1,9 +1,6 @@
 # hnrijs-dwm gentoo
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f096a699-1647-4ac0-876d-8ce495f5fca0" />
+<img width="1600" height="900" alt="th" src="https://github.com/user-attachments/assets/776b4e3a-85f6-4b65-9852-01a82687bdea" />
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/df32987b-d6b9-4dac-8892-32fb6dcd2ac9" />
-
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/f40e26bb-d081-46bd-a418-6645acd5c4bd" />
 
 ## Installation
 
@@ -15,9 +12,7 @@ git clone https://github.com/hnrijs/hnrijs-dwm
 cd hnrijs-dwm
 
 # 2. Make the install script executable and run it
-chmod +x install.sh
 chmod +x installgentoo.sh
-./install.sh
 ./installgentoo.sh
 
 # 3. Reboot your system to apply all changes and services
