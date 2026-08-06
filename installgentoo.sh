@@ -98,7 +98,7 @@ picom &
 thunar --daemon &
 dunst &
 clipmenud &
-
+$HOME/.config/scripts/screen.sh &
 # GNOME Policykit agent for authentication dialogs
 /usr/libexec/polkit-gnome-authentication-agent-1 &
 
