@@ -61,6 +61,7 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[]       = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_bg, "-nf", col_fg, "-sb", col_bg, "-sf", col_fg_active, NULL };
 static const char *termcmd[]        = { "alacritty", NULL };
 static const char *roficmd[]        = { "rofi", "-show", "run", NULL };
+static const char *clipmenucmd[]    = { "clipmenu", NULL };
 static const char *thunarcmd[]      = { "thunar", NULL };
 static const char *browsercmd[]     = { "firefox-bin", NULL };
 static const char *comcmd[]         = { "signal-desktop", NULL };
@@ -78,6 +79,7 @@ static const Key keys[] = {
     /* modifier                     key        function        argument */
     { MODKEY,                       XK_Return,          spawn,          {.v = termcmd } },
     { MODKEY,                       XK_space,           spawn,          {.v = roficmd } },
+    { MODKEY,                       XK_v,               spawn,          {.v = clipmenucmd } },
     { MODKEY,                       XK_f,               spawn,          {.v = thunarcmd } },
     { MODKEY,                       XK_b,               spawn,          {.v = browsercmd } },
     { MODKEY,                       XK_s,               spawn,          {.v = comcmd } },
