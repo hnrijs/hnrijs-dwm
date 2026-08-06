@@ -23,7 +23,7 @@ sudo emerge --ask=n --noreplace \
     media-fonts/dejavu media-fonts/fontawesome media-fonts/noto media-fonts/noto-cjk \
     x11-misc/rofi media-gfx/feh xfce-base/thunar xfce-base/tumbler sys-fs/udisks \
     x11-themes/adwaita-icon-theme media-gfx/imv media-video/mpv media-sound/pavucontrol \
-    x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip lxqt-base/lxqt-policykit \
+    x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip gnome-extra/polkit-gnome \
     media-sound/playerctl sys-power/acpilight media-sound/cava sys-process/btop \
     app-arch/zip app-arch/unzip app-editors/micro app-editors/nano \
     media-gfx/maim sys-power/power-profiles-daemon x11-misc/picom \
@@ -99,8 +99,8 @@ thunar --daemon &
 dunst &
 clipmenud &
 
-# LXQt Policykit agent for authentication dialogs
-/usr/libexec/lxqt-policykit-agent &
+# GNOME Policykit agent for authentication dialogs
+/usr/libexec/polkit-gnome-authentication-agent-1 &
 
 # Status bar clock loop for DWM
 while true; do
@@ -158,7 +158,7 @@ sudo systemctl enable power-profiles-daemon.service
 sudo systemctl enable NetworkManager.service
 sudo systemctl enable systemd-timesyncd.service
 sudo systemctl enable lightdm.service
-systemctl enable fstrim.timer
+sudo systemctl enable fstrim.timer
 
 # 15. Enable user-level audio services for Pipewire and Wireplumber
 echo "Enabling user audio services..."
