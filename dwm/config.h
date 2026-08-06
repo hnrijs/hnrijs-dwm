@@ -59,7 +59,7 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[]       = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_bg, "-nf", col_fg, "-sb", col_bg, "-sf", col_fg_active, NULL };
-static const char *termcmd[]        = { "st", NULL };
+static const char *termcmd[]        = { "alacritty", NULL };
 static const char *roficmd[]        = { "rofi", "-show", "run", NULL };
 static const char *thunarcmd[]      = { "thunar", NULL };
 static const char *browsercmd[]     = { "firefox-bin", NULL };
@@ -70,8 +70,8 @@ static const char *nmtuicmd[]       = { "st", "--class", "nmtui", "-e", "nmtui",
 static const char *lockcmd[]        = { "slock", NULL };
 static const char *powermenu[]      = { "sh -c '$HOME/.config/scripts/rofi-powermenu.sh'", NULL };
 static const char *powerprof[]      = { "sh -c '$HOME/.config/scripts/power_profile.sh'", NULL };
-static const char *sysupdate[]      = { "st", "-e", "$HOME/.config/scripts/system_update.sh", NULL };
-static const char *sysclean[]       = { "st", "-e", "$HOME/.config/scripts/system_clean.sh", NULL };
+static const char *sysupdate[]      = { "alacritty", "-e", "$HOME/.config/scripts/system_update.sh", NULL };
+static const char *sysclean[]       = { "alacritty", "-e", "$HOME/.config/scripts/system_clean.sh", NULL };
 static const char *screenshot[]     = { "sh", "-c", "maim -s | xclip -selection clipboard -t image/png", NULL };
 static const char *screenall[]      = { "sh -c 'mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/scr_$(date +%s).png && maim \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"'", NULL };
 static const char *screensrc[]      = { "sh -c '$HOME/.config/scripts/screen_search.sh'", NULL };
