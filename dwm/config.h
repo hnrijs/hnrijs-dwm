@@ -63,7 +63,7 @@ static const char *termcmd[]        = { "st", NULL };
 static const char *roficmd[]        = { "rofi", "-show", "run", NULL };
 static const char *thunarcmd[]      = { "thunar", NULL };
 static const char *browsercmd[]     = { "firefox-bin", NULL };
-static const char *comcmd[]         = { "signal-desktop-bin", NULL };
+static const char *comcmd[]         = { "signal-desktop", NULL };
 static const char *codecmd[]        = { "vscode", NULL };
 static const char *pavucmd[]        = { "pavucontrol", NULL };
 static const char *nmtuicmd[]       = { "st", "--class", "nmtui", "-e", "nmtui", NULL };
@@ -82,7 +82,7 @@ static const Key keys[] = {
     { MODKEY,                       XK_space,           spawn,          {.v = roficmd } },
     { MODKEY,                       XK_f,               spawn,          {.v = thunarcmd } },
     { MODKEY,                       XK_b,               spawn,          {.v = browsercmd } },
-    { MODKEY,                       XK_s,               spawn,          {.v = comcmd } },
+    { MODKEY,                       XK_t,               spawn,          {.v = comcmd } },
     { MODKEY,                       XK_c,               spawn,          {.v = codecmd } },
     { MODKEY|ShiftMask,             XK_a,               spawn,          {.v = pavucmd } },
     { MODKEY|ShiftMask,             XK_n,               spawn,          {.v = nmtuicmd } },
@@ -109,7 +109,7 @@ static const Key keys[] = {
     { MODKEY,                       XK_e,      zoom,           {0} },
     { MODKEY,                       XK_Tab,    view,           {0} },
     { MODKEY,                       XK_q,      killclient,     {0} },
-    { MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
+    { MODKEY,                       XK_s,      setlayout,      {.v = &layouts[0]} },
     { MODKEY|ShiftMask,             XK_z,      setlayout,      {.v = &layouts[1]} },
     { MODKEY,                       XK_w,      setlayout,      {.v = &layouts[2]} },
     { MODKEY,                       XK_space,  setlayout,      {0} },
