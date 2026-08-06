@@ -37,7 +37,7 @@ mkdir -p "$HOME/Documents" "$HOME/Music" "$HOME/Downloads" "$HOME/Pictures" "$HO
         app-arch/zip app-arch/unzip app-editors/nano \
         media-gfx/maim sys-power/power-profiles-daemon \
         x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
-        media-video/pipewire media-video/wireplumber \
+        media-video/pipewire media-video/wireplumber app-misc/jq \
         sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk \
         x11-terms/alacritty net-misc/curl x11-apps/xsetroot \
         net-wireless/wireless-tools app-editors/vim app-misc/fastfetch \
