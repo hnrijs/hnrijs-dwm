@@ -24,7 +24,7 @@ sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-misc/rofi media-gfx/feh xfce-base/thunar xfce-base/tumbler sys-fs/udisks \
     x11-themes/adwaita-icon-theme media-gfx/imv media-video/mpv media-sound/pavucontrol \
     x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip gnome-extra/polkit-gnome \
-    media-sound/playerctl sys-power/acpilight media-sound/cava sys-process/btop \
+    media-sound/playerctl media-sound/cava sys-process/btop \
     app-arch/zip app-arch/unzip app-editors/micro app-editors/nano \
     media-gfx/maim sys-power/power-profiles-daemon \
     x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
