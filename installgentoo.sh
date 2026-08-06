@@ -99,7 +99,6 @@ thunar --daemon &
 dunst &
 polybar &
 clipmenud &
-$HOME/.config/scripts/polybar.sh &
 $HOME/.config/scripts/screen.sh &
 # GNOME Policykit agent for authentication dialogs
 /usr/libexec/polkit-gnome-authentication-agent-1 &
