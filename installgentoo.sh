@@ -15,6 +15,7 @@ echo "Accepting testing keyword for micro text editor..."
 sudo mkdir -p /etc/portage/package.accept_keywords
 echo "app-editors/micro ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/editors > /dev/null
 echo "x11-misc/slstatus ~amd64" | sudo tee /etc/portage/package.accept_keywords/slstatus
+
 # 3. Install official Gentoo packages (including LightDM, Pipewire, and requested fonts)
 echo "Installing official Gentoo packages..."
 sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
@@ -30,7 +31,7 @@ sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
     media-video/pipewire media-video/wireplumber \
     sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk \
-    x11-misc/slock x11-terms/alacritty net-misc/curl x11-misc/slstatus
+    x11-misc/slock x11-terms/alacritty net-misc/curl x11-misc/slstatus \
     net-wireless/wireless-tools
 
 # 4. Copy configuration files to ~/.config
@@ -55,16 +56,36 @@ fi
 
 cd "$SCRIPT_DIR"
 
-# 6. Compile and install ST (Simple Terminal)
-if [ -d "$SCRIPT_DIR/st" ]; then
-    rm -rf "$HOME/st"
-    cp -r "$SCRIPT_DIR/st" "$HOME/"
-    cd "$HOME/st"
-    sudo make clean install
-    sudo chown -R "$USER:$USER" "$HOME/st"
-else
-    echo "Error: st directory not found in repository!"
+# 6. Compile and install custom slstatus (Polybar alternative)
+echo "Cloning and configuring slstatus..."
+cd "$HOME"
+if [ ! -d "$HOME/slstatus" ]; then
+    git clone https://git.suckless.org/slstatus
 fi
+cd slstatus
+
+# Generate custom slstatus config
+cat << 'EOF' > config.h
+#include "components.h"
+static const char unknown_str[] = "n/a";
+static const unsigned int interval = 1000;
+static const struct arg args[] = {
+    /* function     format               argument */
+    { run_command,  " %s | ",            "playerctl metadata --format '♫ {{ artist }} - {{ title }}' 2>/dev/null || echo 'No Media'" },
+    { disk_perc,    "FS %s%% | ",        "/" },
+    { ram_perc,     "RAM %s%% | ",       NULL },
+    { cpu_perc,     "CPU %s%% | ",       NULL },
+    { run_command,  "PWR %s | ",         "powerprofilesctl get 2>/dev/null | sed 's/power-saver/S/;s/balanced/B/;s/performance/P/'" },
+    { run_command,  "VPN %s | ",         "ip link show up 2>/dev/null | grep -qE 'tun[0-9]+|wg[0-9]+|proton|pvpn' && echo 'ON' || echo 'OFF'" },
+    { run_command,  "VOL %s | ",         "pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | grep -o '[0-9]*%' | head -n 1" },
+    { battery_perc, "BAT %s%% | ",       "BAT1" },
+    { keymap,       "KBD %s | ",         NULL },
+    { datetime,     "%s ",               "%Y-%m-%d %H:%M" },
+};
+EOF
+
+sudo make clean install
+sudo chown -R "$USER:$USER" "$HOME/slstatus"
 
 cd "$SCRIPT_DIR"
 
@@ -104,11 +125,6 @@ $HOME/.config/scripts/screen.sh &
 # GNOME Policykit agent for authentication dialogs
 /usr/libexec/polkit-gnome-authentication-agent-1 &
 
-# Status bar clock loop for DWM
-while true; do
-    xsetroot -name "$(date '+%Y-%m-%d %H:%M')"
-    sleep 60
-done &
 EOF
 chmod +x "$HOME/.xprofile"
 
