@@ -80,6 +80,8 @@ static const char *powerprof[]      = { "sh", "-c", "$HOME/.config/scripts/power
 static const char *screenshot[]     = { "sh", "-c", "mkdir -p $HOME/Pictures/Screenshots && f=$HOME/Pictures/Screenshots/scr_$(date +%s).png && maim -s \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"", NULL };
 static const char *screenall[]      = { "sh", "-c", "mkdir -p $HOME/Pictures/Screenshots && f=$HOME/Pictures/Screenshots/scr_$(date +%s).png && maim \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"", NULL };
 static const char *screensrc[]      = { "sh", "-c", "$HOME/.config/scripts/screen_search.sh", NULL };
+static const char *updcmd[]         = { "alacritty", "-e", "bash", "-c", "$HOME/scripts/system_update.sh", NULL };
+static const char *cleancmd[]       = { "alacritty", "-e", "bash", "-c", "$HOME/scripts/system_clean.sh", NULL };
 
 /* Audio and Brightness Commands */
 static const char *upvol[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%",     NULL };
@@ -102,10 +104,12 @@ static const Key keys[] = {
     { MODKEY,                       XK_o,      spawn,          {.v = obscmd } },
     { MODKEY,                       XK_r,      spawn,          {.v = resolvecmd } },
     { MODKEY,                       XK_m,      spawn,          {.v = audaciouscmd } },
-    { MODKEY|ShiftMask,             XK_v,      spawn,          {.v = protonvpncmd } },
-
+    { MODKEY|ShiftMask,             XK_p,      spawn,          {.v = protonvpncmd } },
     { MODKEY|ShiftMask,             XK_a,      spawn,          {.v = pavucmd } },
     { MODKEY|ShiftMask,             XK_n,      spawn,          {.v = nmtuicmd } },
+    /* Update & Cleanup */
+    { MODKEY|ShiftMask,             XK_u,      spawn,          {.v = updcmd } },
+    { MODKEY|ShiftMask,             XK_c,      spawn,          {.v = cleancmd } },
 
     /* Scripts & Power */
     { MODKEY|ShiftMask,             XK_l,      spawn,          {.v = lockcmd } },
