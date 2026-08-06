@@ -16,7 +16,9 @@ cd hnrijs-dwm
 
 # 2. Make the install script executable and run it
 chmod +x install.sh
+chmod +x installgentoo.sh
 ./install.sh
+./installgentoo.sh
 
 # 3. Reboot your system to apply all changes and services
 sudo reboot
