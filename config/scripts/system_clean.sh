@@ -1,26 +1,30 @@
 #!/bin/bash
 
-echo "Starting System Cleanup"
+set -e
 
-# Clean pacman cache keeping only the latest versions
-echo "1. Cleaning Pacman cache..."
-sudo paccache -r
+echo "Starting Gentoo System Cleanup..."
 
-# Remove orphaned packages (unused dependencies)
-if [ -n "$(pacman -Qtdq)" ]; then
-    echo "2. Removing orphaned packages..."
-    sudo pacman -Rns $(pacman -Qtdq) --noconfirm
+if command -v eclean-dist &> /dev/null; then
+    sudo eclean-dist --deep
 else
-    echo "2. No orphaned packages found."
+    echo "eclean-dist not found."
 fi
 
-# Clean yay/AUR cache
-echo "3. Cleaning AUR cache..."
-yay -Scc --noconfirm
+if [ -n "$(emerge --depclean -pq)" ]; then
+    sudo emerge --depclean
+else
+    echo "No orphaned packages found."
+fi
 
-# Clean user thumbnail cache
-echo "4. Cleaning thumbnail cache..."
-rm -rf ~/.cache/thumbnails/*
+if [ -d "$HOME/.cache/thumbnails" ]; then
+    rm -rf "$HOME/.cache/thumbnails/*"
+    echo "Thumbnail cache cleared."
+else
+    echo "No thumbnail cache found."
+fi
 
-echo "Cleanup Complete!"
+find "$HOME/.cache" -type f -atime +30 -delete 2>/dev/null || true
+
+echo "Gentoo Cleanup Complete!"
+
 read -p "Press [Enter] to close..."
