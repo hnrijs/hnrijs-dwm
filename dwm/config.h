@@ -68,13 +68,13 @@ static const char *codecmd[]        = { "vscode", NULL };
 static const char *pavucmd[]        = { "pavucontrol", NULL };
 static const char *nmtuicmd[]       = { "alacritty", "--class", "nmtui", "-e", "nmtui", NULL };
 static const char *lockcmd[]        = { "slock", NULL };
-static const char *powermenu[]      = { "sh -c '$HOME/.config/scripts/rofi-powermenu.sh'", NULL };
-static const char *powerprof[]      = { "sh -c '$HOME/.config/scripts/power_profile.sh'", NULL };
+static const char *powermenu[]      = { "sh", "-c", "$HOME/.config/scripts/rofi-powermenu.sh", NULL };
+static const char *powerprof[]      = { "sh", "-c", "$HOME/.config/scripts/power_profile.sh", NULL };
 static const char *sysupdate[]      = { "alacritty", "-e", "$HOME/.config/scripts/system_update.sh", NULL };
 static const char *sysclean[]       = { "alacritty", "-e", "$HOME/.config/scripts/system_clean.sh", NULL };
 static const char *screenshot[]     = { "sh", "-c", "maim -s | xclip -selection clipboard -t image/png", NULL };
 static const char *screenall[]      = { "sh -c 'mkdir -p ~/Pictures/Screenshots && f=~/Pictures/Screenshots/scr_$(date +%s).png && maim \"$f\" && xclip -selection clipboard -t image/png -i \"$f\"'", NULL };
-static const char *screensrc[]      = { "sh -c '$HOME/.config/scripts/screen_search.sh'", NULL };
+static const char *screensrc[]      = { "sh", "-c", "$HOME/.config/scripts/screen_search.sh", NULL };
 
 static const Key keys[] = {
     /* modifier                     key        function        argument */
