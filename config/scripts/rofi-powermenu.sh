@@ -9,8 +9,6 @@ reboot=''
 lock='󰌾'
 suspend='󰤄'
 logout='󰍃'
-yes=''
-no='' 
 
 rofi_cmd() {
 	rofi -dmenu \
@@ -20,44 +18,22 @@ rofi_cmd() {
 		-config "$HOME/.config/rofi/rofi-powermenu-config.rasi"
 }
 
-confirm_cmd() {
-	rofi -theme-str 'window {location: center; anchor: center; fullscreen: false; width: 350px; border-radius: 0px;}' \
-		-theme-str 'mainbox {orientation: vertical; children: [ "message", "listview" ]; border-radius: 0px;}' \
-		-theme-str 'listview {columns: 2; lines: 1; border: 0px;}' \
-		-theme-str 'element {border-radius: 0px;}' \
-		-theme-str 'element-text {horizontal-align: 0.5;}' \
-		-theme-str 'textbox {horizontal-align: 0.5;}' \
-		-dmenu \
-		-p 'Confirmation' \
-		-mesg 'Are you sure?' \
-		-config "$HOME/.config/rofi/rofi-powermenu-config.rasi"
-}
-
-confirm_exit() {
-	echo -e "$yes\n$no" | confirm_cmd
-}
-
 run_rofi() {
 	echo -e "$lock\n$reboot\n$logout\n$suspend\n$shutdown\n$hibernate" | rofi_cmd
 }
 
 run_cmd() {
-	selected="$(confirm_exit)"
-	if [[ "$selected" == "$yes" ]]; then
-		if [[ $1 == '--shutdown' ]]; then
-			systemctl poweroff || loginctl poweroff
-		elif [[ $1 == '--reboot' ]]; then
-			systemctl reboot || loginctl reboot
-		elif [[ $1 == '--hibernate' ]]; then
-			systemctl hibernate
-		elif [[ $1 == '--suspend' ]]; then
-			amixer set Master mute
-			systemctl suspend
-		elif [[ $1 == '--logout' ]]; then
-			i3-msg exit
-		fi
-	else
-		exit 0
+	if [[ $1 == '--shutdown' ]]; then
+		systemctl poweroff || loginctl poweroff
+	elif [[ $1 == '--reboot' ]]; then
+		systemctl reboot || loginctl reboot
+	elif [[ $1 == '--hibernate' ]]; then
+		systemctl hibernate
+	elif [[ $1 == '--suspend' ]]; then
+		amixer set Master mute
+		systemctl suspend
+	elif [[ $1 == '--logout' ]]; then
+		pkill dwm  
 	fi
 }
 
@@ -73,9 +49,10 @@ case ${chosen} in
 		run_cmd --hibernate
         ;;
     $lock)
-        i3lock -c 000000 || slock
+        slock
 		;;
     $suspend)
+        slock & sleep 0.5 
 		run_cmd --suspend
         ;;
     $logout)
