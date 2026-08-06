@@ -97,7 +97,7 @@ fi
 feh --bg-scale "$HOME/Pictures/main.png" &
 thunar --daemon &
 dunst &
-polybar &
+slstatus &
 clipmenud &
 $HOME/.config/scripts/screen.sh &
 # GNOME Policykit agent for authentication dialogs
