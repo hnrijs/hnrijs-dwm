@@ -26,7 +26,7 @@ sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip gnome-extra/polkit-gnome \
     media-sound/playerctl sys-power/acpilight media-sound/cava sys-process/btop \
     app-arch/zip app-arch/unzip app-editors/micro app-editors/nano \
-    media-gfx/maim sys-power/power-profiles-daemon x11-misc/picom \
+    media-gfx/maim sys-power/power-profiles-daemon \
     x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
     media-video/pipewire media-video/wireplumber \
     sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk lxappearance
@@ -94,7 +94,6 @@ fi
 
 # Background daemons and wallpaper
 feh --bg-scale "$HOME/Pictures/main.png" &
-picom &
 thunar --daemon &
 dunst &
 clipmenud &
