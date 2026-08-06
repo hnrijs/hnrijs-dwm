@@ -17,7 +17,7 @@ echo "app-editors/micro ~amd64" | sudo tee -a /etc/portage/package.accept_keywor
 
 # 3. Install official Gentoo packages (including LightDM, Pipewire, and requested fonts)
 echo "Installing official Gentoo packages..."
-sudo emerge --ask=n --noreplace \
+sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-base/xorg-server x11-apps/xinit x11-apps/xrandr x11-libs/libXinerama x11-libs/libXft \
     media-fonts/jetbrains-mono media-fonts/noto-emoji media-fonts/symbols-nerd-font \
     media-fonts/dejavu media-fonts/fontawesome media-fonts/noto media-fonts/noto-cjk \
