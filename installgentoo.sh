@@ -13,12 +13,18 @@ mkdir -p "$HOME/Documents" "$HOME/Music" "$HOME/Downloads" "$HOME/Pictures" "$HO
 # 2. Accept testing
 echo "Accepting testing keywords..."
 sudo mkdir -p /etc/portage/package.accept_keywords
-echo "app-editors/micro ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/editors > /dev/null
-echo "x11-misc/slstatus ~amd64" | sudo tee /etc/portage/package.accept_keywords/slstatus
+echo "media-gfx/krita ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/krita
+
+echo "Accepting testing keywords with tee..."
+sudo mkdir -p /etc/portage/package.accept_keywords
+echo "media-gfx/krita ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/krita
+echo "media-video/obs-studio ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/obs-studio
+echo "net-im/signal-desktop-bin ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/signal-desktop
 
 # 3. Install official Gentoo packages
 echo "Installing official Gentoo packages..."
 sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
+    --autounmask=y --autounmask-write=y --autounmask-continue=y \
     x11-base/xorg-server x11-apps/xinit x11-apps/xrandr x11-libs/libXinerama x11-libs/libXft \
     media-fonts/jetbrains-mono media-fonts/noto-emoji media-fonts/symbols-nerd-font \
     media-fonts/dejavu media-fonts/fontawesome media-fonts/noto media-fonts/noto-cjk \
@@ -26,13 +32,15 @@ sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
     x11-themes/adwaita-icon-theme media-gfx/imv media-video/mpv media-sound/pavucontrol \
     x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip gnome-extra/polkit-gnome \
     media-sound/playerctl media-sound/cava sys-process/btop \
-    app-arch/zip app-arch/unzip app-editors/micro app-editors/nano \
+    app-arch/zip app-arch/unzip app-editors/nano \
     media-gfx/maim sys-power/power-profiles-daemon \
     x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
     media-video/pipewire media-video/wireplumber \
     sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk \
     x11-terms/alacritty net-misc/curl x11-apps/xsetroot \
-    net-wireless/wireless-tools app-editors/vim
+    net-wireless/wireless-tools app-editors/vim media-gfx/gimp \
+    media-gfx/krita media-video/obs-studio net-im/signal-desktop-bin media-sound/audacious
+
 
 # 4. Copy configuration files to ~/.config
 echo "Copying config files to $HOME/.config/..."
