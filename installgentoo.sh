@@ -10,36 +10,47 @@ echo "Starting Automated Gentoo Setup..."
 echo "Creating user directories..."
 mkdir -p "$HOME/Documents" "$HOME/Music" "$HOME/Downloads" "$HOME/Pictures" "$HOME/Videos" "$HOME/.config"
 
-# 2. Accept testing
-echo "Accepting testing keywords..."
-sudo mkdir -p /etc/portage/package.accept_keywords
-echo "media-gfx/krita ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/krita
-
-echo "Accepting testing keywords with tee..."
-sudo mkdir -p /etc/portage/package.accept_keywords
-echo "media-gfx/krita ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/krita
-echo "media-video/obs-studio ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/obs-studio
-echo "net-im/signal-desktop-bin ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/signal-desktop
-
-# 3. Install official Gentoo packages
-echo "Installing official Gentoo packages..."
-sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
-    --autounmask=y --autounmask-write=y --autounmask-continue=y \
-    x11-base/xorg-server x11-apps/xinit x11-apps/xrandr x11-libs/libXinerama x11-libs/libXft \
-    media-fonts/jetbrains-mono media-fonts/noto-emoji media-fonts/symbols-nerd-font \
-    media-fonts/dejavu media-fonts/fontawesome media-fonts/noto media-fonts/noto-cjk \
-    x11-misc/rofi media-gfx/feh xfce-base/thunar xfce-base/tumbler sys-fs/udisks \
-    x11-themes/adwaita-icon-theme media-gfx/imv media-video/mpv media-sound/pavucontrol \
-    x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip gnome-extra/polkit-gnome \
-    media-sound/playerctl media-sound/cava sys-process/btop \
-    app-arch/zip app-arch/unzip app-editors/nano \
-    media-gfx/maim sys-power/power-profiles-daemon \
-    x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
-    media-video/pipewire media-video/wireplumber \
-    sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk \
-    x11-terms/alacritty net-misc/curl x11-apps/xsetroot \
-    net-wireless/wireless-tools app-editors/vim media-gfx/gimp \
-    media-gfx/krita media-video/obs-studio net-im/signal-desktop-bin media-sound/audacious
+    sudo mkdir -p /etc/portage/package.accept_keywords
+    sudo mkdir -p /etc/portage/package.use
+    sudo mkdir -p /etc/dracut.conf.d
+    echo "media-gfx/krita ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/krita
+    echo "media-video/obs-studio ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/obs-studio
+    echo "net-im/signal-desktop-bin ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/signal-desktop
+    echo ">=x11-drivers/nvidia-drivers-595.0.0 ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/nvidia
+    echo "x11-drivers/nvidia-drivers dist-kernel modules static-libs uvm tools driver opencl chromium X" | sudo tee -a /etc/portage/package.use/nvidia
+    echo "media-video/ffmpeg chromium cuda nvenc vdpau vaapi" | sudo tee -a /etc/portage/package.use/ffmpeg
+    echo "media-video/obs-studio fdk nvenc vaapi vulkan pipewire" | sudo tee -a /etc/portage/package.use/obs-studio
+    echo "media-gfx/gimp opencl alsa udev webp" | sudo tee -a /etc/portage/package.use/gimp
+    echo "media-sound/audacious pipewire mpris" | sudo tee -a /etc/portage/package.use/audacious
+    echo 'force_drivers+=" nvidia nvidia_modeset nvidia_uvm nvidia_drm "' | sudo tee -a /etc/dracut.conf.d/nvidia.conf
+    echo "sys-libs/zlib minizip" | sudo tee -a /etc/portage/package.use/zlib
+    echo "sys-libs/minizip-ng compat" | sudo tee -a /etc/portage/package.use/minizip-ng
+        sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
+        --autounmask=y --autounmask-write=y --autounmask-continue=y \
+        x11-base/xorg-server x11-apps/xinit x11-apps/xrandr x11-libs/libXinerama x11-libs/libXft \
+        media-fonts/jetbrains-mono media-fonts/noto-emoji media-fonts/symbols-nerd-font \
+        media-fonts/dejavu media-fonts/fontawesome media-fonts/noto media-fonts/noto-cjk \
+        x11-misc/rofi media-gfx/feh xfce-base/thunar xfce-base/tumbler sys-fs/udisks \
+        x11-themes/adwaita-icon-theme media-gfx/imv media-video/mpv media-sound/pavucontrol \
+        x11-misc/dunst x11-misc/clipmenu x11-misc/xsel x11-misc/xclip gnome-extra/polkit-gnome \
+        media-sound/playerctl media-sound/cava sys-process/btop \
+        app-arch/zip app-arch/unzip app-editors/nano \
+        media-gfx/maim sys-power/power-profiles-daemon \
+        x11-misc/lightdm x11-misc/lightdm-gtk-greeter www-client/firefox-bin \
+        media-video/pipewire media-video/wireplumber \
+        sys-apps/xdg-desktop-portal sys-apps/xdg-desktop-portal-gtk \
+        x11-terms/alacritty net-misc/curl x11-apps/xsetroot \
+        net-wireless/wireless-tools app-editors/vim app-misc/fastfetch \
+        sys-fs/ntfs3g net-vpn/wireguard-tools net-vpn/networkmanager-openvpn \
+        media-gfx/gimp media-gfx/krita media-video/obs-studio \
+        net-im/signal-desktop-bin media-sound/audacious x11-drivers/nvidia-drivers
+  
+    sudo emerge @module-rebuild
+    sudo systemctl enable nvidia-persistenced.service
+    sudo dispatch-conf <<EOF
+    u
+    EOF
+   
 
 
 # 4. Copy configuration files to ~/.config
