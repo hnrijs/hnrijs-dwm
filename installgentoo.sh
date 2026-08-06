@@ -14,7 +14,7 @@ mkdir -p "$HOME/Documents" "$HOME/Music" "$HOME/Downloads" "$HOME/Pictures" "$HO
 echo "Accepting testing keyword for micro text editor..."
 sudo mkdir -p /etc/portage/package.accept_keywords
 echo "app-editors/micro ~amd64" | sudo tee -a /etc/portage/package.accept_keywords/editors > /dev/null
-
+echo "x11-misc/slstatus ~amd64" | sudo tee /etc/portage/package.accept_keywords/slstatus
 # 3. Install official Gentoo packages (including LightDM, Pipewire, and requested fonts)
 echo "Installing official Gentoo packages..."
 sudo emerge --ask=n --noreplace --binpkg-respect-use=y \
